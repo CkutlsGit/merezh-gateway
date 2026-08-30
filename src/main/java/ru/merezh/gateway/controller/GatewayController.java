@@ -40,7 +40,7 @@ public class GatewayController {
     }
 
     @RequestMapping("/api/v1/auth/**")
-    public ResponseEntity<?> proxyAuth( // исправить что не отображает ошибку
+    public ResponseEntity<?> proxyAuth(
             HttpServletRequest request,
             @RequestBody(required = false) String body
     )
