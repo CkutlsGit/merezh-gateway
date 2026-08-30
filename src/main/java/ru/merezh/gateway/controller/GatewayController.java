@@ -14,6 +14,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Enumeration;
 
@@ -23,6 +25,7 @@ import java.util.Enumeration;
 public class GatewayController {
 
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${service.users.url}")
     private String userUrl;
@@ -86,12 +89,16 @@ public class GatewayController {
         catch (HttpClientErrorException e) {
             log.error("Ошибка на стороне клиента - {}: {}", e.getClass(), e.getMessage());
 
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            JsonNode jsonNode = objectMapper.readTree(e.getResponseBodyAsString());
+
+            return ResponseEntity.status(e.getStatusCode()).body(jsonNode);
         }
         catch (HttpServerErrorException e) {
             log.error("Ошибка на стороне сервера - {}, {}", e.getClass(), e.getMessage());
 
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            JsonNode jsonNode = objectMapper.readTree(e.getResponseBodyAsString());
+
+            return ResponseEntity.status(e.getStatusCode()).body(jsonNode);
         }
         catch (ResourceAccessException e) {
             log.error("Ошибка с подключением - {}, {}", e.getClass(), e.getMessage());
