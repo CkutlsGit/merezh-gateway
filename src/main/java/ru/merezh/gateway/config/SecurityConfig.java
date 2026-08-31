@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 pathAuthService + "/login",
                                 pathAuthService + "/refresh"
                         ).permitAll()
+                        .requestMatchers(pathAuthService + "/logout").authenticated()
                         .requestMatchers(HttpMethod.GET, pathUserService,  pathUserService + "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, pathAuthService + "/**").hasRole("ADMIN")
                 )
