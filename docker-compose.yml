@@ -87,7 +87,7 @@ services:
 
   orderservice-merezh:
     container_name: orderservice-merezh
-    build: .
+    build: ../orderservice-merezh
     restart: always
     networks:
       - dbnet
