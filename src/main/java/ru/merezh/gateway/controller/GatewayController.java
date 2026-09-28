@@ -18,6 +18,8 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +43,13 @@ public class GatewayController {
 
     @Value("${service.payments.url}")
     private String paymentUrl;
+
+    private static final Set<String> ALLOWED_HEADERS = Set.of(
+            "accept",
+            "accept-language",
+            "content-type",
+            "user-agent"
+    );
 
     @RequestMapping("/api/v1/users/**")
     public ResponseEntity<?> proxyUsers(
@@ -154,9 +163,14 @@ public class GatewayController {
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
 
-            if (!headerName.equalsIgnoreCase(HttpHeaders.AUTHORIZATION)) {
-                String headerValue = request.getHeader(headerName);
-                headers.add(headerName, headerValue);
+            if (!ALLOWED_HEADERS.contains(headerName.toLowerCase(Locale.ROOT))) {
+                continue;
+            }
+
+            Enumeration<String> values = request.getHeaders(headerName);
+
+            while (values.hasMoreElements()) {
+                headers.add(headerName, values.nextElement());
             }
         }
     }
