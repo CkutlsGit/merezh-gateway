@@ -27,6 +27,45 @@ services:
     depends_on:
       - postgres-userservice
 
+  postgres-orderservice:
+    container_name: postgres-orderservice
+    image: postgres:18.6-alpine3.23
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=orderservice-merezh
+    volumes:
+      - orderservice-data:/var/lib/postgresql
+    networks:
+      - dbnet
+    restart: always
+
+  postgres-paymentservice:
+    container_name: postgres-paymentservice
+    image: postgres:18.6-alpine3.23
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=paymentservice-merezh
+    volumes:
+      - paymentservice-data:/var/lib/postgresql
+    networks:
+      - dbnet
+    restart: always
+
+  postgres-walletservice:
+    container_name: postgres-walletservice
+    image: postgres:18.6-alpine3.23
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=walletservice-merezh
+    volumes:
+      - walletservice-data:/var/lib/postgresql
+    networks:
+      - dbnet
+    restart: always
+
   userservice-merezh:
     container_name: userservice-merezh
     build: ../userservice-merezh
@@ -46,6 +85,33 @@ services:
       - postgres-authservice
       - userservice-merezh
 
+  orderservice-merezh:
+    container_name: orderservice-merezh
+    build: .
+    restart: always
+    networks:
+      - dbnet
+    depends_on:
+      - postgres-orderservice
+
+  paymentservice-merezh:
+    container_name: paymentservice-merezh
+    build: ../paymentservice-merezh
+    restart: always
+    networks:
+      - dbnet
+    depends_on:
+      - postgres-paymentservice
+
+  walletservice-merezh:
+    container_name: walletservice-merezh
+    build: ../walletservice-merezh
+    restart: always
+    networks:
+      - dbnet
+    depends_on:
+      - postgres-walletservice
+
   gateway-merezh:
     container_name: gateway-merezh
     build: .
@@ -57,6 +123,9 @@ services:
     depends_on:
       - userservice-merezh
       - authservice-merezh
+      - orderservice-merezh
+      - walletservice-merezh
+      - paymentservice-merezh
 
 networks:
   dbnet:
@@ -64,3 +133,6 @@ networks:
 volumes:
   userservice-data:
   authservice-data:
+  paymentservice-data:
+  walletservice-data:
+  orderservice-data:
