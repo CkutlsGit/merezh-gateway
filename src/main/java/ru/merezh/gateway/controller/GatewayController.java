@@ -33,6 +33,15 @@ public class GatewayController {
     @Value("${service.auth.url}")
     private String authUrl;
 
+    @Value("${service.wallets.url}")
+    private String walletUrl;
+
+    @Value("${service.orders.url}")
+    private String orderUrl;
+
+    @Value("${service.payments.url}")
+    private String paymentUrl;
+
     @RequestMapping("/api/v1/users/**")
     public ResponseEntity<?> proxyUsers(
             HttpServletRequest request,
@@ -49,6 +58,33 @@ public class GatewayController {
     )
     {
         return forwardRequest(authUrl, request, body);
+    }
+
+    @RequestMapping("/api/v1/wallets/**")
+    public ResponseEntity<?> proxyWallet(
+            HttpServletRequest request,
+            @RequestBody(required = false) String body
+    )
+    {
+        return forwardRequest(walletUrl, request, body);
+    }
+
+    @RequestMapping("/api/v1/orders/**")
+    public ResponseEntity<?> proxyOrder(
+            HttpServletRequest request,
+            @RequestBody(required = false) String body
+    )
+    {
+        return forwardRequest(orderUrl, request, body);
+    }
+
+    @RequestMapping("/api/v1/payments/**")
+    public ResponseEntity<?> proxyPayment(
+            HttpServletRequest request,
+            @RequestBody(required = false) String body
+    )
+    {
+        return forwardRequest(paymentUrl, request, body);
     }
 
     private ResponseEntity<?> forwardRequest(
