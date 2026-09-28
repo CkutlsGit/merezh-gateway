@@ -23,6 +23,16 @@ public class SecurityConfig {
 
     @Value("${service.users.path}")
     private String pathUserService;
+
+    @Value("${service.wallets.path}")
+    private String pathWalletService;
+
+    @Value("${service.orders.path}")
+    private String pathOrderService;
+
+    @Value("${service.payments.path}")
+    private String pathPaymentService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -36,8 +46,26 @@ public class SecurityConfig {
                                 pathAuthService + "/refresh"
                         ).permitAll()
                         .requestMatchers(pathAuthService + "/logout").authenticated()
-                        .requestMatchers(HttpMethod.GET, pathUserService,  pathUserService + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, pathAuthService + "/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                pathWalletService + "/balance",
+                                pathOrderService + "/get/user",
+                                pathPaymentService + "/get/user"
+                        ).authenticated()
+                        .requestMatchers(HttpMethod.POST,
+                                pathWalletService + "/create",
+                                pathWalletService + "/balance/sum",
+                                pathWalletService + "/balance/sub",
+                                pathOrderService + "/create",
+                                pathPaymentService + "/pay/**"
+                        ).authenticated()
+                        .requestMatchers(HttpMethod.GET,
+                                pathUserService,
+                                pathUserService + "/**",
+                                pathOrderService + "/get/**",
+                                pathPaymentService + "/get/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, pathAuthService + "/**", pathWalletService + "/**").hasRole("ADMIN")
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
