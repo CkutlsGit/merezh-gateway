@@ -11,6 +11,12 @@ services:
     networks:
       - dbnet
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d userservice-merezh" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   postgres-authservice:
     container_name: postgres-authservice
@@ -26,6 +32,12 @@ services:
     restart: always
     depends_on:
       - postgres-userservice
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d authservice-merezh" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   postgres-orderservice:
     container_name: postgres-orderservice
@@ -39,6 +51,12 @@ services:
     networks:
       - dbnet
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d orderservice-merezh" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   postgres-paymentservice:
     container_name: postgres-paymentservice
@@ -52,6 +70,12 @@ services:
     networks:
       - dbnet
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d paymentservice-merezh" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   postgres-walletservice:
     container_name: postgres-walletservice
@@ -65,6 +89,12 @@ services:
     networks:
       - dbnet
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d walletservice-merezh" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   userservice-merezh:
     container_name: userservice-merezh
@@ -73,7 +103,14 @@ services:
     networks:
       - dbnet
     depends_on:
-      - postgres-userservice
+        postgres-userservice:
+          condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health/readiness"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   authservice-merezh:
     container_name: authservice-merezh
@@ -82,8 +119,14 @@ services:
     networks:
       - dbnet
     depends_on:
-      - postgres-authservice
-      - userservice-merezh
+      postgres-authservice:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8081/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   orderservice-merezh:
     container_name: orderservice-merezh
@@ -92,7 +135,14 @@ services:
     networks:
       - dbnet
     depends_on:
-      - postgres-orderservice
+      postgres-orderservice:
+          condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8085/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   paymentservice-merezh:
     container_name: paymentservice-merezh
@@ -101,7 +151,14 @@ services:
     networks:
       - dbnet
     depends_on:
-      - postgres-paymentservice
+      postgres-paymentservice:
+          condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   walletservice-merezh:
     container_name: walletservice-merezh
@@ -110,7 +167,14 @@ services:
     networks:
       - dbnet
     depends_on:
-      - postgres-walletservice
+        postgres-walletservice:
+          condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8083/actuator/health/readiness" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   gateway-merezh:
     container_name: gateway-merezh
