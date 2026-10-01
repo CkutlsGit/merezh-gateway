@@ -11,12 +11,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.merezh.gateway.security.JwtFilter;
+import ru.merezh.gateway.security.handler.AccessHandler;
+import ru.merezh.gateway.security.handler.AuthEntryPointHandler;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final AccessHandler accessHandler;
+    private final AuthEntryPointHandler authEntryPointHandler;
 
     @Value("${service.auth.path}")
     private String pathAuthService;
@@ -67,6 +71,10 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, pathAuthService + "/**", pathWalletService + "/**").hasRole("ADMIN")
                 )
+                 .exceptionHandling(exception -> exception
+                         .accessDeniedHandler(accessHandler)
+                         .authenticationEntryPoint(authEntryPointHandler)
+                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
