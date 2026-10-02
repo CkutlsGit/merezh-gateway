@@ -2,7 +2,7 @@
 
 Single entry point for the Merezh microservices platform. Responsible for routing, authentication, and authorization.
 
-📖 In Russian: [перевод на русский](#)
+📖 In Russian: [перевод на русский](https://github.com/CkutlsGit/merezh-gateway/blob/main/README.ru.md)
 
 ## 📋 Overview
 
