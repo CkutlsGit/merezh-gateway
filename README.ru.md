@@ -13,7 +13,7 @@ Gateway - это микросервис на Spring Boot, который слу�
 **Backend**
 
 - Java 21 - основной язык
-- Spring Boot 3 - фреймворк приложения
+- Spring Boot 4 - фреймворк приложения
 - Spring Security - аутентификация и авторизация
 - RestTemplate - проксирование HTTP-запросов
 
