@@ -15,7 +15,7 @@ All internal services (user, auth, wallet, order, payment) are **not exposed ext
 **Backend**
 
 - Java 21 - core language
-- Spring Boot 3 - application framework
+- Spring Boot 4 - application framework
 - Spring Security - authentication and authorization
 - RestTemplate - HTTP request proxying
 
